@@ -198,7 +198,6 @@
             border-bottom-left-radius: 5px;
             border: 1px solid #712375;
         }
-        /* Style untuk Markdown di bubble bot */
         .message.bot .bubble strong {
             color: #e8b0e8;
             font-weight: 700;
@@ -465,7 +464,7 @@
             }
         });
 
-        // FUNGSI PARSER MARKDOWN SEDERHANA
+        // FUNGSI PARSER MARKDOWN YANG LEBIH BERSIH (TANPA SISA *)
         function parseMarkdown(text) {
             let html = text;
             
@@ -480,23 +479,24 @@
             // Garis pemisah *** atau ---
             html = html.replace(/^(\*\*\*|---)$/gm, '<hr>');
             
-            // Heading (hanya di awal baris)
+            // Heading
             html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
             html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
             html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
             
-            // Bold **teks**
+            // Bold **teks** (jangan sampai ke-skip)
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             
-            // Italic *teks* (tapi jangan bentrok dengan list)
-            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Italic *teks* (tapi pastikan tidak mengganggu list atau simbol lain)
+            // Hanya ganti * yang berpasangan dan tidak berspasi berlebihan
+            html = html.replace(/(?<!\*)\*(?!\s)([^*]+?)(?<!\s)\*(?!\*)/g, '<em>$1</em>');
             
-            // List unordered (- item)
-            html = html.replace(/^- (.*?)$/gm, '<li>$1</li>');
+            // List unordered (- item) HAPUS * yang tersisa dari list
+            html = html.replace(/^[\*\-\•]\s+(.*?)$/gm, '<li>$1</li>');
             html = html.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>$&</ul>');
             
             // List ordered (1. item)
-            html = html.replace(/^\d+\. (.*?)$/gm, '<li>$1</li>');
+            html = html.replace(/^\d+\.\s+(.*?)$/gm, '<li>$1</li>');
             html = html.replace(/(<li>.*?<\/li>\n?)+/g, function(match) {
                 if (!match.includes('<ul>')) {
                     return '<ol>' + match + '</ol>';
@@ -504,17 +504,18 @@
                 return match;
             });
             
-            // Code inline `code`
+            // Inline code `code`
             html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+            
+            // Hapus sisa karakter * yang tidak terformat
+            html = html.replace(/\*{1,2}/g, '');
             
             // Baris baru jadi <br>
             html = html.replace(/\n/g, '<br>');
             
-            // Perbaiki <br> yang kelebihan di dalam list/heading
-            html = html.replace(/<(ul|ol|h1|h2|h3)><br>/g, '<$1>');
-            html = html.replace(/<br><\/(ul|ol|h1|h2|h3)>/g, '</$1>');
-            html = html.replace(/<li><br>/g, '<li>');
-            html = html.replace(/<br><\/li>/g, '</li>');
+            // Bersihin <br> di dalam tag heading atau list
+            html = html.replace(/<(h1|h2|h3|li)><br>/g, '<$1>');
+            html = html.replace(/<br><\/(h1|h2|h3|li)>/g, '</$1>');
             
             return html;
         }
