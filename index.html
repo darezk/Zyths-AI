@@ -430,7 +430,7 @@
             if (key && key.startsWith("AIza")) {
                 API_KEY = key;
                 localStorage.setItem('zythsai_api_key', key);
-                apiInputContainer.classList.add('hide'); // Sembunyikan input API
+                apiInputContainer.classList.add('hide');
                 addMessage("✅ API Key berhasil disimpan! Sekarang aku bisa jawab apa saja. Coba tanyakan sesuatu!", false);
             } else {
                 addMessage("❌ API Key tidak valid! Pastikan API Key Google Gemini-mu benar (dimulai dengan 'AIza').", false);
@@ -478,7 +478,8 @@
         }
 
         async function callGeminiAPI(prompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            // PAKAI MODEL GEMINI 2.0 FLASH (SUDAH DIPERBAIKI)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -498,7 +499,6 @@
             const message = userInput.value.trim();
             if (!message) return;
             
-            // Cek apakah API Key ada
             if (!API_KEY) {
                 addMessage("⚠️ Masukkan API Key Google Gemini dulu di bagian atas!", false);
                 return;
@@ -531,4 +531,4 @@
         userInput.focus();
     </script>
 </body>
-    </html>
+        </html>
