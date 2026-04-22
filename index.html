@@ -27,7 +27,6 @@
             min-height: 100%;
         }
 
-        /* --- INTRO BOOTING SCREEN --- */
         .intro-screen {
             position: fixed;
             top: 0;
@@ -80,7 +79,6 @@
             50% { opacity: 1; transform: translateY(-3px);}
         }
 
-        /* --- MAIN CHAT CONTAINER --- */
         .chat-container {
             width: 100%;
             max-width: 500px;
@@ -100,7 +98,6 @@
             opacity: 1;
         }
 
-        /* --- HEADER DENGAN TOMBOL API SYSTEM --- */
         .chat-header {
             background: linear-gradient(135deg, #712375 0%, #4a1a4d 100%);
             padding: 14px 20px;
@@ -140,7 +137,6 @@
             transform: translateY(-48%) scale(0.98);
         }
 
-        /* --- AREA PESAN (MEMANJANG) --- */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -163,7 +159,6 @@
             border-radius: 10px;
         }
 
-        /* --- BUBBLE CHAT --- */
         .message {
             display: flex;
             flex-direction: column;
@@ -216,7 +211,6 @@
             color: #c97bc9;
         }
 
-        /* --- TYPING INDICATOR --- */
         .typing-indicator {
             display: flex;
             gap: 6px;
@@ -241,7 +235,6 @@
             30% { transform: translateY(-5px); opacity: 1; }
         }
 
-        /* --- API INPUT (HIDE jika sudah tersimpan) --- */
         .api-input {
             background: #2a122a;
             padding: 10px 12px;
@@ -284,7 +277,6 @@
         }
         .api-input button:hover { background: #712375; }
 
-        /* --- INPUT AREA (KIRIM PESAN) --- */
         .input-area {
             background: #2d1a2d;
             padding: 12px;
@@ -346,7 +338,6 @@
 </head>
 <body>
 
-    <!-- INTRO BOOTING SCREEN -->
     <div class="intro-screen" id="introScreen">
         <div class="intro-content">
             <div class="intro-text">
@@ -360,7 +351,6 @@
         </div>
     </div>
 
-    <!-- MAIN CHAT CONTAINER -->
     <div class="chat-container" id="chatContainer">
         <div class="chat-header">
             <h1>Zyths AI</h1>
@@ -394,10 +384,8 @@
         const apiInputContainer = document.getElementById('apiInputContainer');
         const apiSystemBtn = document.getElementById('apiSystemBtn');
 
-        // CEK APAKAH API KEY SUDAH TERSIMPAN
         let API_KEY = localStorage.getItem('zythsai_api_key') || '';
 
-        // Jika sudah ada API Key, sembunyikan input API
         if (API_KEY) {
             apiInputContainer.classList.add('hide');
         }
@@ -413,7 +401,6 @@
         const apiKeyInput = document.getElementById('apiKeyInput');
         const saveApiBtn = document.getElementById('saveApiBtn');
 
-        // TOMBOL API SYSTEM - RESET API KEY
         apiSystemBtn.addEventListener('click', () => {
             if (confirm("Reset API Key? Kamu harus memasukkan API Key baru untuk menggunakan Zyths AI.")) {
                 localStorage.removeItem('zythsai_api_key');
@@ -424,7 +411,6 @@
             }
         });
 
-        // Simpan API Key
         saveApiBtn.addEventListener('click', () => {
             const key = apiKeyInput.value.trim();
             if (key && key.startsWith("AIza")) {
@@ -478,8 +464,8 @@
         }
 
         async function callGeminiAPI(prompt) {
-            // PAKAI MODEL GEMINI 2.0 FLASH (SUDAH DIPERBAIKI)
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+            // PAKAI MODEL GEMINI 2.5 FLASH (TERBARU)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -489,6 +475,7 @@
             });
             if (!response.ok) {
                 const error = await response.json();
+                console.log("Error detail:", error);
                 throw new Error(error.error?.message || 'API Error');
             }
             const data = await response.json();
@@ -514,13 +501,7 @@
             } catch (error) {
                 hideTyping();
                 console.error(error);
-                if (error.message.includes('API key not valid')) {
-                    addMessage("❌ API Key tidak valid! Periksa kembali.", false);
-                } else if (error.message.includes('quota')) {
-                    addMessage("⚠️ Kuota API habis. Coba lagi nanti atau gunakan API Key lain.", false);
-                } else {
-                    addMessage("❌ Terjadi kesalahan. Cek koneksi internet atau API Key-mu.", false);
-                }
+                addMessage(`❌ ${error.message}`, false);
             }
         }
 
@@ -531,4 +512,4 @@
         userInput.focus();
     </script>
 </body>
-        </html>
+    </html>
