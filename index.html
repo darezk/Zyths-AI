@@ -100,13 +100,14 @@
             opacity: 1;
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER DENGAN TOMBOL API SYSTEM --- */
         .chat-header {
             background: linear-gradient(135deg, #712375 0%, #4a1a4d 100%);
             padding: 14px 20px;
             border-bottom: 2px solid #9b4d9e;
             text-align: center;
             flex-shrink: 0;
+            position: relative;
         }
         .chat-header h1 {
             color: #e8b0e8;
@@ -114,6 +115,29 @@
             font-weight: 600;
             font-family: 'Poppins', sans-serif;
             letter-spacing: -0.3px;
+        }
+        .api-system-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid #9b4d9e;
+            color: #e8b0e8;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .api-system-btn:hover {
+            background: rgba(155, 77, 158, 0.5);
+            transform: translateY(-50%) scale(1.02);
+        }
+        .api-system-btn:active {
+            transform: translateY(-48%) scale(0.98);
         }
 
         /* --- AREA PESAN (MEMANJANG) --- */
@@ -310,6 +334,7 @@
             .chat-messages { padding: 12px; }
             .input-area { padding: 10px; }
             .api-input { padding: 8px 10px; }
+            .api-system-btn { padding: 3px 10px; font-size: 9px; }
         }
 
         @media (max-width: 360px) {
@@ -339,6 +364,7 @@
     <div class="chat-container" id="chatContainer">
         <div class="chat-header">
             <h1>Zyths AI</h1>
+            <button class="api-system-btn" id="apiSystemBtn">API System</button>
         </div>
 
         <div class="chat-messages" id="chatMessages">
@@ -366,6 +392,7 @@
         const introScreen = document.getElementById('introScreen');
         const chatContainer = document.getElementById('chatContainer');
         const apiInputContainer = document.getElementById('apiInputContainer');
+        const apiSystemBtn = document.getElementById('apiSystemBtn');
 
         // CEK APAKAH API KEY SUDAH TERSIMPAN
         let API_KEY = localStorage.getItem('zythsai_api_key') || '';
@@ -385,6 +412,17 @@
         const sendBtn = document.getElementById('sendBtn');
         const apiKeyInput = document.getElementById('apiKeyInput');
         const saveApiBtn = document.getElementById('saveApiBtn');
+
+        // TOMBOL API SYSTEM - RESET API KEY
+        apiSystemBtn.addEventListener('click', () => {
+            if (confirm("Reset API Key? Kamu harus memasukkan API Key baru untuk menggunakan Zyths AI.")) {
+                localStorage.removeItem('zythsai_api_key');
+                API_KEY = '';
+                apiInputContainer.classList.remove('hide');
+                apiKeyInput.value = '';
+                addMessage("🔑 API Key telah direset. Masukkan API Key baru untuk melanjutkan.", false);
+            }
+        });
 
         // Simpan API Key
         saveApiBtn.addEventListener('click', () => {
