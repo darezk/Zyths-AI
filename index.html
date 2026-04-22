@@ -198,6 +198,48 @@
             border-bottom-left-radius: 5px;
             border: 1px solid #712375;
         }
+        /* Style untuk Markdown di bubble bot */
+        .message.bot .bubble strong {
+            color: #e8b0e8;
+            font-weight: 700;
+        }
+        .message.bot .bubble em {
+            color: #c97bc9;
+            font-style: italic;
+        }
+        .message.bot .bubble h1, .message.bot .bubble h2, .message.bot .bubble h3 {
+            font-size: 1.2em;
+            margin: 8px 0;
+            color: #e8b0e8;
+        }
+        .message.bot .bubble ul, .message.bot .bubble ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        .message.bot .bubble li {
+            margin: 4px 0;
+        }
+        .message.bot .bubble hr {
+            margin: 10px 0;
+            border: none;
+            height: 1px;
+            background: #712375;
+        }
+        .message.bot .bubble code {
+            background: #1a0a1a;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .message.bot .bubble pre {
+            background: #1a0a1a;
+            padding: 10px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 8px 0;
+        }
+
         .message-name {
             font-size: clamp(9px, 3vw, 10px);
             margin-bottom: 4px;
@@ -423,6 +465,60 @@
             }
         });
 
+        // FUNGSI PARSER MARKDOWN SEDERHANA
+        function parseMarkdown(text) {
+            let html = text;
+            
+            // Escape HTML dulu
+            html = html.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+            
+            // Garis pemisah *** atau ---
+            html = html.replace(/^(\*\*\*|---)$/gm, '<hr>');
+            
+            // Heading (hanya di awal baris)
+            html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+            
+            // Bold **teks**
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic *teks* (tapi jangan bentrok dengan list)
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // List unordered (- item)
+            html = html.replace(/^- (.*?)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>$&</ul>');
+            
+            // List ordered (1. item)
+            html = html.replace(/^\d+\. (.*?)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*?<\/li>\n?)+/g, function(match) {
+                if (!match.includes('<ul>')) {
+                    return '<ol>' + match + '</ol>';
+                }
+                return match;
+            });
+            
+            // Code inline `code`
+            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+            
+            // Baris baru jadi <br>
+            html = html.replace(/\n/g, '<br>');
+            
+            // Perbaiki <br> yang kelebihan di dalam list/heading
+            html = html.replace(/<(ul|ol|h1|h2|h3)><br>/g, '<$1>');
+            html = html.replace(/<br><\/(ul|ol|h1|h2|h3)>/g, '</$1>');
+            html = html.replace(/<li><br>/g, '<li>');
+            html = html.replace(/<br><\/li>/g, '</li>');
+            
+            return html;
+        }
+
         function addMessage(text, isUser = true) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -431,7 +527,13 @@
             nameSpan.textContent = isUser ? 'Kamu' : 'Zyths AI';
             const bubbleDiv = document.createElement('div');
             bubbleDiv.className = 'bubble';
-            bubbleDiv.innerHTML = text.replace(/\n/g, '<br>');
+            
+            if (isUser) {
+                bubbleDiv.innerHTML = text.replace(/\n/g, '<br>');
+            } else {
+                bubbleDiv.innerHTML = parseMarkdown(text);
+            }
+            
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(bubbleDiv);
             chatMessages.appendChild(messageDiv);
@@ -464,7 +566,6 @@
         }
 
         async function callGeminiAPI(prompt) {
-            // PAKAI MODEL GEMINI 2.5 FLASH (TERBARU)
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
             const response = await fetch(url, {
                 method: 'POST',
@@ -475,7 +576,6 @@
             });
             if (!response.ok) {
                 const error = await response.json();
-                console.log("Error detail:", error);
                 throw new Error(error.error?.message || 'API Error');
             }
             const data = await response.json();
