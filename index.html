@@ -397,8 +397,7 @@
             <div class="message bot">
                 <div class="message-name">Zyths AI</div>
                 <div class="bubble">
-                    Halo! Aku Zyths AI versi online.<br>
-                    Masukkan API Key Google-mu di bawah, lalu aku bisa jawab apa saja.
+                    Halo!, saya Zyths AI. Ada yang bisa saya bantu?
                 </div>
             </div>
         </div>
@@ -437,6 +436,19 @@
         const apiKeyInput = document.getElementById('apiKeyInput');
         const saveApiBtn = document.getElementById('saveApiBtn');
 
+        // Variabel untuk menyimpan posisi scroll sebelumnya
+        let previousScrollTop = 0;
+        let isUserScrolling = false;
+
+        // Deteksi apakah user sedang scroll
+        chatMessages.addEventListener('scroll', () => {
+            isUserScrolling = true;
+            previousScrollTop = chatMessages.scrollTop;
+            setTimeout(() => {
+                isUserScrolling = false;
+            }, 150);
+        });
+
         apiSystemBtn.addEventListener('click', () => {
             if (confirm("Reset API Key? Kamu harus memasukkan API Key baru untuk menggunakan Zyths AI.")) {
                 localStorage.removeItem('zythsai_api_key');
@@ -459,11 +471,9 @@
             }
         });
 
-        // PARSER MARKDOWN - FOKUS BERSIHIN SEMUA SIMBOL *
         function parseMarkdown(text) {
             let html = text;
             
-            // Escape HTML
             html = html.replace(/[&<>]/g, function(m) {
                 if (m === '&') return '&amp;';
                 if (m === '<') return '&lt;';
@@ -471,30 +481,22 @@
                 return m;
             });
             
-            // Garis pemisah
             html = html.replace(/^(\*\*\*|---)$/gm, '<hr>');
-            
-            // Bold **teks**
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // Italic *teks* (tapi hati-hati jangan ganggu list)
             html = html.replace(/(?<!\*)\*(?!\s)([^*]+?)(?<!\s)\*(?!\*)/g, '<em>$1</em>');
             
-            // Handle bullet list dengan * di awal baris
             let lines = html.split('\n');
             let inList = false;
             let resultLines = [];
             
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];
-                // Deteksi apakah ini baris list (dimulai dengan * atau -)
                 let listMatch = line.match(/^[\*\-\•]\s+(.+)$/);
                 if (listMatch) {
                     if (!inList) {
                         resultLines.push('<ul>');
                         inList = true;
                     }
-                    // Hapus simbol *, -, • dan spasi di awal, lalu bungkus <li>
                     let content = listMatch[1];
                     resultLines.push(`<li>${content}</li>`);
                 } else {
@@ -510,7 +512,6 @@
             }
             html = resultLines.join('\n');
             
-            // Ordered list (1., 2., dst)
             let lines2 = html.split('\n');
             let inOl = false;
             let resultLines2 = [];
@@ -538,16 +539,9 @@
             }
             html = resultLines2.join('\n');
             
-            // Inline code `code`
             html = html.replace(/`(.*?)`/g, '<code>$1</code>');
-            
-            // HAPUS SEMUA SISA * YANG TIDAK TERPAKAI (sendirian atau sisa format)
             html = html.replace(/\*{1,2}/g, '');
-            
-            // Baris baru jadi <br>
             html = html.replace(/\n/g, '<br>');
-            
-            // Bersihin <br> yang mengganggu di dalam list
             html = html.replace(/<(ul|ol)><br>/g, '<$1>');
             html = html.replace(/<br><\/(ul|ol)>/g, '</$1>');
             html = html.replace(/<li><br>/g, '<li>');
@@ -574,9 +568,13 @@
             messageDiv.appendChild(nameSpan);
             messageDiv.appendChild(bubbleDiv);
             chatMessages.appendChild(messageDiv);
-            requestAnimationFrame(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            });
+            
+            // KEMBALIKAN KE POSISI SCROLL SEBELUMNYA (TIDAK LANGSUNG KE BAWAH)
+            if (!isUserScrolling && previousScrollTop > 0) {
+                requestAnimationFrame(() => {
+                    chatMessages.scrollTop = previousScrollTop;
+                });
+            }
         }
 
         function showTyping() {
@@ -592,9 +590,13 @@
             typingDiv.appendChild(nameSpan);
             typingDiv.appendChild(typingBubble);
             chatMessages.appendChild(typingDiv);
-            requestAnimationFrame(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            });
+            
+            // Tetap di posisi scroll saat typing indicator muncul
+            if (!isUserScrolling && previousScrollTop > 0) {
+                requestAnimationFrame(() => {
+                    chatMessages.scrollTop = previousScrollTop;
+                });
+            }
         }
 
         function hideTyping() {
