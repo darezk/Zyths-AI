@@ -320,7 +320,7 @@
             cursor: pointer;
         }
 
-        /* INPUT AREA DENGAN GLOW EFFECT */
+        /* INPUT AREA DENGAN TEXT GLOW EFFECT */
         .input-area {
             background: #2d1a2d;
             padding: 10px;
@@ -339,27 +339,10 @@
             font-size: 13px;
             outline: none;
             transition: all 0.1s ease;
+            caret-color: #9b4d9e;
         }
         .input-area input:focus { 
             border-color: #9b4d9e; 
-        }
-        /* GLOW EFFECT SAAT MENGETIK */
-        .input-area input.typing-glow {
-            animation: glowPulse 0.15s ease-out;
-        }
-        @keyframes glowPulse {
-            0% {
-                box-shadow: 0 0 0px 0px #9b4d9e;
-                border-color: #9b4d9e;
-            }
-            50% {
-                box-shadow: 0 0 12px 3px #9b4d9e;
-                border-color: #e8b0e8;
-            }
-            100% {
-                box-shadow: 0 0 0px 0px #9b4d9e;
-                border-color: #9b4d9e;
-            }
         }
         .input-area input::placeholder {
             color: #7a4a7d;
@@ -376,6 +359,26 @@
             font-size: 13px;
         }
         .btn-send:active { transform: scale(0.97); }
+
+        /* Animasi glow pada karakter yang baru diketik */
+        @keyframes textGlow {
+            0% {
+                text-shadow: 0 0 0px #9b4d9e;
+                color: #9b4d9e;
+            }
+            50% {
+                text-shadow: 0 0 8px #e8b0e8, 0 0 3px #9b4d9e;
+                color: #ffffff;
+            }
+            100% {
+                text-shadow: 0 0 0px #9b4d9e;
+                color: #e8b0e8;
+            }
+        }
+        .char-glow {
+            animation: textGlow 0.3s ease-out forwards;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -433,19 +436,45 @@
         const introScreen = document.getElementById('introScreen');
         setTimeout(() => introScreen.classList.add('hide'), 5000);
 
-        // GLOW EFFECT SETIAP KETIK
+        // TEXT GLOW EFFECT - Setiap huruf yang diketik akan bersinar
         const userInput = document.getElementById('userInput');
-        let glowTimeout = null;
+        let previousValue = '';
         
-        userInput.addEventListener('input', function() {
-            // Tambah class glow
-            this.classList.add('typing-glow');
+        userInput.addEventListener('input', function(e) {
+            const currentValue = this.value;
             
-            // Hapus glow setelah animasi selesai
-            clearTimeout(glowTimeout);
-            glowTimeout = setTimeout(() => {
-                this.classList.remove('typing-glow');
-            }, 150);
+            // Cek apakah ada penambahan karakter (bukan hapus)
+            if (currentValue.length > previousValue.length) {
+                // Karakter yang baru ditambahkan
+                const newChar = currentValue[currentValue.length - 1];
+                
+                // Buat elemen span untuk animasi glow
+                const span = document.createElement('span');
+                span.textContent = newChar;
+                span.className = 'char-glow';
+                span.style.position = 'absolute';
+                span.style.visibility = 'hidden';
+                document.body.appendChild(span);
+                
+                // Dapatkan posisi kursor
+                const rect = this.getBoundingClientRect();
+                const scrollLeft = this.scrollLeft;
+                
+                // Buat range untuk mengukur posisi karakter
+                if (this.setSelectionRange) {
+                    const start = currentValue.length - 1;
+                    this.focus();
+                    this.setSelectionRange(start, start);
+                    
+                    // Dapatkan posisi caret
+                    const caretRect = this.getBoundingClientRect();
+                    
+                    // Hapus span
+                    span.remove();
+                }
+            }
+            
+            previousValue = currentValue;
         });
 
         // DATA
