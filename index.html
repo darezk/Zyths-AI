@@ -18,7 +18,7 @@
         }
 
         body {
-            background: #712375;
+            background: linear-gradient(135deg, #1a0a1a 0%, #2d1a2d 100%);
             font-family: 'Poppins', 'Inter', sans-serif;
             overflow: hidden;
         }
@@ -30,7 +30,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #712375;
+            background: linear-gradient(135deg, #1a0a1a 0%, #2d1a2d 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -104,8 +104,8 @@
             left: -280px;
             width: 280px;
             height: 100%;
-            background: #5a155a;
-            border-right: 1px solid #9b4d9e;
+            background: #1f0f1f;
+            border-right: 1px solid #712375;
             display: flex;
             flex-direction: column;
             transition: left 0.3s ease;
@@ -116,12 +116,12 @@
         }
         .sidebar-header {
             padding: 16px;
-            border-bottom: 1px solid #9b4d9e;
-            background: #712375;
+            border-bottom: 1px solid #712375;
+            background: #2d1a2d;
         }
         .new-chat-btn {
             width: 100%;
-            background: #9b4d9e;
+            background: linear-gradient(135deg, #712375 0%, #9b4d9e 100%);
             border: none;
             color: white;
             padding: 12px;
@@ -134,10 +134,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: background 0.2s;
-        }
-        .new-chat-btn:hover {
-            background: #b86bb8;
         }
         .chat-list {
             flex: 1;
@@ -145,17 +141,17 @@
             padding: 12px;
         }
         .chat-item {
-            background: #5a155a;
+            background: #2a122a;
             border-radius: 10px;
             padding: 12px;
             margin-bottom: 8px;
             cursor: pointer;
-            border: 1px solid #9b4d9e;
+            border: 1px solid #4a1a4d;
             transition: all 0.2s;
             user-select: none;
         }
         .chat-item.active {
-            background: #9b4d9e;
+            background: #712375;
             border-color: #e8b0e8;
         }
         .chat-item.active .chat-title {
@@ -163,7 +159,7 @@
         }
         .chat-item.press {
             transform: scale(0.98);
-            background: #4a104a;
+            background: #4a1a4d;
         }
         .chat-title {
             color: #e8b0e8;
@@ -179,14 +175,14 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #712375;
+            background: #2d1a2d;
             height: 100%;
             width: 100%;
         }
         .chat-header {
-            background: #5a155a;
+            background: linear-gradient(135deg, #712375 0%, #4a1a4d 100%);
             padding: 12px 16px;
-            border-bottom: 1px solid #9b4d9e;
+            border-bottom: 2px solid #9b4d9e;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -214,7 +210,7 @@
             margin: 0;
         }
         .api-system-btn {
-            background: #712375;
+            background: rgba(255,255,255,0.15);
             border: 1px solid #9b4d9e;
             color: #e8b0e8;
             padding: 5px 12px;
@@ -229,7 +225,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            background: #712375;
+            background: #2a122a;
         }
         .message {
             display: flex;
@@ -252,34 +248,34 @@
             font-family: 'Inter', sans-serif;
         }
         .message.user .bubble {
-            background: #9b4d9e;
+            background: linear-gradient(135deg, #712375 0%, #9b4d9e 100%);
             color: white;
             border-bottom-right-radius: 5px;
         }
         .message.bot .bubble {
-            background: #5a155a;
+            background: #4a1a4d;
             color: #e8b0e8;
             border-bottom-left-radius: 5px;
-            border: 1px solid #9b4d9e;
+            border: 1px solid #712375;
         }
         .message-name {
             font-size: 9px;
             margin-bottom: 4px;
             padding-left: 8px;
-            color: #e8b0e8;
+            color: #b86bb8;
         }
         .message.user .message-name {
             text-align: right;
-            color: #e8b0e8;
+            color: #c97bc9;
         }
         .typing-indicator {
             display: flex;
             gap: 6px;
             padding: 10px 14px;
-            background: #5a155a;
+            background: #4a1a4d;
             border-radius: 20px;
             width: fit-content;
-            border: 1px solid #9b4d9e;
+            border: 1px solid #712375;
         }
         .typing-indicator span {
             width: 7px;
@@ -297,9 +293,9 @@
 
         /* API INPUT */
         .api-input {
-            background: #5a155a;
+            background: #2a122a;
             padding: 8px 12px;
-            border-top: 1px solid #9b4d9e;
+            border-top: 1px solid #4a1a4d;
             display: flex;
             gap: 8px;
             flex-shrink: 0;
@@ -307,8 +303,8 @@
         .api-input.hide { display: none; }
         .api-input input {
             flex: 1;
-            background: #712375;
-            border: 1px solid #9b4d9e;
+            background: #1a0a1a;
+            border: 1px solid #712375;
             color: #e8b0e8;
             padding: 8px 12px;
             border-radius: 25px;
@@ -316,40 +312,61 @@
             outline: none;
         }
         .api-input button {
-            background: #9b4d9e;
-            border: 1px solid #9b4d9e;
-            color: white;
+            background: #4a1a4d;
+            border: 1px solid #712375;
+            color: #e8b0e8;
             padding: 6px 14px;
             border-radius: 25px;
             cursor: pointer;
         }
 
-        /* INPUT AREA */
+        /* INPUT AREA DENGAN GLOW EFFECT */
         .input-area {
-            background: #5a155a;
+            background: #2d1a2d;
             padding: 10px;
-            border-top: 1px solid #9b4d9e;
+            border-top: 2px solid #712375;
             display: flex;
             gap: 10px;
             flex-shrink: 0;
         }
         .input-area input {
             flex: 1;
-            background: #712375;
-            border: 1px solid #9b4d9e;
+            background: #1a0a1a;
+            border: 2px solid #712375;
             color: #e8b0e8;
             padding: 10px 14px;
             border-radius: 30px;
             font-size: 13px;
             outline: none;
+            transition: all 0.1s ease;
         }
-        .input-area input:focus { border-color: #e8b0e8; }
+        .input-area input:focus { 
+            border-color: #9b4d9e; 
+        }
+        /* GLOW EFFECT SAAT MENGETIK */
+        .input-area input.typing-glow {
+            animation: glowPulse 0.15s ease-out;
+        }
+        @keyframes glowPulse {
+            0% {
+                box-shadow: 0 0 0px 0px #9b4d9e;
+                border-color: #9b4d9e;
+            }
+            50% {
+                box-shadow: 0 0 12px 3px #9b4d9e;
+                border-color: #e8b0e8;
+            }
+            100% {
+                box-shadow: 0 0 0px 0px #9b4d9e;
+                border-color: #9b4d9e;
+            }
+        }
         .input-area input::placeholder {
-            color: #c9a3c9;
+            color: #7a4a7d;
             font-size: 12px;
         }
         .btn-send {
-            background: #9b4d9e;
+            background: linear-gradient(135deg, #712375 0%, #9b4d9e 100%);
             border: none;
             color: white;
             padding: 8px 18px;
@@ -357,10 +374,6 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 13px;
-            transition: background 0.2s;
-        }
-        .btn-send:hover {
-            background: #b86bb8;
         }
         .btn-send:active { transform: scale(0.97); }
     </style>
@@ -420,6 +433,21 @@
         const introScreen = document.getElementById('introScreen');
         setTimeout(() => introScreen.classList.add('hide'), 5000);
 
+        // GLOW EFFECT SETIAP KETIK
+        const userInput = document.getElementById('userInput');
+        let glowTimeout = null;
+        
+        userInput.addEventListener('input', function() {
+            // Tambah class glow
+            this.classList.add('typing-glow');
+            
+            // Hapus glow setelah animasi selesai
+            clearTimeout(glowTimeout);
+            glowTimeout = setTimeout(() => {
+                this.classList.remove('typing-glow');
+            }, 150);
+        });
+
         // DATA
         let chats = [];
         let activeChatId = null;
@@ -476,7 +504,6 @@
                     closeSidebar();
                 };
                 
-                // LONG PRESS
                 div.ontouchstart = (e) => {
                     e.preventDefault();
                     currentPressItem = div;
@@ -509,8 +536,6 @@
                     div.classList.remove('press');
                     currentPressItem = null;
                 };
-                
-                // Mouse support
                 div.onmousedown = (e) => {
                     currentPressItem = div;
                     div.classList.add('press');
@@ -686,4 +711,4 @@
         document.getElementById('userInput').focus();
     </script>
 </body>
-        </html>
+    </html>
